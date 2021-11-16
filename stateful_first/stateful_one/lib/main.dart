@@ -15,6 +15,8 @@ class MyBetterCounterApp extends StatefulWidget {
 class _MyBetterCounterAppState extends State<MyBetterCounterApp> {
   int counter = 0;
 
+  String? a;
+
   void increment() {
     setState(() {
       counter++;
