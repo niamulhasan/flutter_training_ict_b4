@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:movie_app/controller/movie_controller.dart';
+import 'package:movie_app/pages/model/movie.dart';
 
 class ResultPage extends StatefulWidget {
   final String? search_query;
@@ -15,25 +16,14 @@ class ResultPage extends StatefulWidget {
 }
 
 class _ResultPageState extends State<ResultPage> {
-  late Future<List> movieListFuture;
-
-  Future<List> searchMovie({String? query}) async {
-    var response = await http
-        .get(Uri.parse("https://imdb-api.com/API/Search/k_7a5d7x6o/$query"));
-    if (response.statusCode == 200) {
-      var movieData = jsonDecode(response.body);
-      List movieList = movieData["results"];
-      return movieList;
-    } else {
-      throw Exception("Error Loading data");
-    }
-  }
+  late Future<List<Movie>> movieListFuture;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    movieListFuture = this.searchMovie(query: widget.search_query!);
+    movieListFuture =
+        MovieController().searchMovie(query: widget.search_query!);
   }
 
   @override
@@ -47,18 +37,18 @@ class _ResultPageState extends State<ResultPage> {
         width: double.infinity,
         child: FutureBuilder(
             future: movieListFuture,
-            builder: (BuildContext context, AsyncSnapshot<List> sn) {
+            builder: (BuildContext context, AsyncSnapshot<List<Movie>> sn) {
               if (sn.hasData) {
-                List? movies = sn.data;
+                List<Movie>? movies = sn.data;
                 return ListView.builder(
                     itemCount: movies!.length,
                     itemBuilder: (BuildContext context, int i) {
                       return ListTile(
                         leading: CircleAvatar(
-                          backgroundImage: NetworkImage(movies[i]["image"]),
+                          backgroundImage: NetworkImage(movies[i].thumb!),
                         ),
-                        title: Text(movies[i]["title"]),
-                        subtitle: Text(movies[i]["description"]),
+                        title: Text(movies[i].title!),
+                        subtitle: Text(movies[i].details!),
                       );
                     });
               } else if (sn.hasError) {
