@@ -15,20 +15,32 @@ class NotesController implements NotesControllerInterface {
   }
 
   @override
-  Future<bool> deleteNote(int index) {
-    // TODO: implement deleteNote
-    throw UnimplementedError();
+  Future<bool> deleteNote(int index) async {
+    SharedPreferences handle = await SharedPreferences.getInstance();
+    List<String>? notes = handle.getStringList(Config.notesKey);
+    if (notes != null) {
+      notes.removeAt(index);
+      return await handle.setStringList(Config.notesKey, notes);
+    }
+    return false;
   }
 
   @override
-  Future<List<String>?> getNotes() {
-    // TODO: implement getNotes
-    throw UnimplementedError();
+  Future<List<String>?> getNotes() async {
+    SharedPreferences handle = await SharedPreferences.getInstance();
+    return handle.getStringList(Config.notesKey);
   }
 
   @override
-  Future<bool> updateNote(int index, String note) {
-    // TODO: implement updateNote
-    throw UnimplementedError();
+  Future<bool> updateNote(int index, String note) async {
+    SharedPreferences handle = await SharedPreferences.getInstance();
+    List<String>? notes = handle.getStringList(Config.notesKey);
+
+    if (notes != null) {
+      notes[index] = note;
+      return await handle.setStringList(Config.notesKey, notes);
+    }
+
+    return false;
   }
 }
