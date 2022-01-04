@@ -10,8 +10,9 @@ class NotesController implements NotesControllerInterface {
     if (notes != null) {
       notes.add(note);
       return await handle.setStringList(Config.notesKey, notes);
+    } else {
+      return await handle.setStringList(Config.notesKey, [note]);
     }
-    return false;
   }
 
   @override
