@@ -41,9 +41,47 @@ class _HomeViewState extends State<HomeView> {
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2),
                     itemCount: notes!.length,
-                    itemBuilder: (BuildContext context, int index) => Card(
-                      color: Colors.redAccent,
-                      child: Text("${notes[index]}"),
+                    itemBuilder: (BuildContext context, int index) => Stack(
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          height: double.infinity,
+                          child: Card(
+                            color: Colors.redAccent,
+                            child: Text("${notes[index]}"),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: InkWell(
+                            onTap: () async {
+                              print("delete pressed ${index}");
+                              String msg = "Nothing Happened";
+                              bool isDeleted =
+                                  await NotesController().deleteNote(index);
+
+                              if (isDeleted) {
+                                msg = "Note Successfully Deleted";
+                              } else {
+                                msg = "Note is not Deleted!";
+                              }
+                              final snackBar = SnackBar(
+                                content: Text(msg),
+                              );
+
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
+                              setState(() {});
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(
+                                Icons.delete,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 } else if (sn.hasError) {
